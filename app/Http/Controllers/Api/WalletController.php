@@ -72,7 +72,7 @@ class WalletController extends Controller
         $user = $request->user();
         try {
             $reference = GeneralHelper::generateTransactionReference(ServiceType::WALLET_TRANSFER()->value);
-            $beneficiary = WalletServices::get($validated['account_number']);
+            $beneficiary = WalletServices::getViaAccountNumber($validated['account_number']);
             WalletTransactionService::transfer(
                 $user->walletId(), $beneficiary->id, $validated['amount'], $reference,
                 sprintf('Wallet to Wallet Transfer of N%s to  %s | %s', $validated['amount'], $validated['account_number'], $reference)

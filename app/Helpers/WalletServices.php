@@ -3,6 +3,7 @@
 namespace App\Helpers;
 
 use App\Models\User;
+use App\Models\Wallet;
 use Illuminate\Database\Eloquent\Builder;
 use RuntimeException;
 
@@ -12,13 +13,7 @@ class WalletServices
     public static function get($var)
     {
         $user = User::query()
-            ->with(['wallet'])
-            ->where(function (Builder $query) use ($var) {
-                $query->where('name', $var)
-                    ->orWhereHas("wallet", function (Builder $query) use ($var) {
-                        $query->where('account_number', $var);
-                    });
-            })
+            ->where('name', $var)
             ->first();
 
         if ($user) {
@@ -29,6 +24,16 @@ class WalletServices
             return $wallet;
         }
         throw new RuntimeException('Cannot find virtual account.', 404);
+    }
+
+    public static function getViaAccountNumber($var)
+    {
+        $wallet = Wallet::query()->where('account_number', $var)->first();
+        if (!$wallet) {
+            throw new RuntimeException('Cannot find virtual account.', 404);
+        }
+        return $wallet;
+
     }
 
 

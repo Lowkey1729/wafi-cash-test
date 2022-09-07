@@ -68,27 +68,12 @@ class WalletUnitTest extends TestCase
         $token = $this->authenticate();
 
         //Virtual User
-        $new_user = User::query()->create([
-            'name' => 'wallet-service',
-            'email' => 'wallet_service@gmail.com',
-            'password' => Hash::make('secret1234'),
-            'email_verified_at' => "2022-07-07 09:54:59"
-        ]);
+        //Virtual User
+        $user_b = $this->createNewUser('wallet-service', 'wallet_service@gmail.com');
         //Virtual Wallet
-        $new_user->wallet()->create([
-            'balance' => 0,
-            'status' => 'ACTIVE',
-            'is_virtual' => true,
-            'account_number' => substr(str_shuffle("0123456789"), 0, 10),
-        ]);
 
-
-        $this->user->wallet()->create([
-            'balance' => 0,
-            'status' => 'ACTIVE',
-            'account_number' => substr(str_shuffle("0123456789"), 0, 10),
-        ]);
-
+        $this->createWallet($user_b, 0, true);
+        $this->createWallet($this->user);
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $token,
         ])->json('POST', route('user.wallet.fund'), [
@@ -105,31 +90,16 @@ class WalletUnitTest extends TestCase
         $token = $this->authenticate();
 
         //Virtual User
-        $new_user = User::query()->create([
-            'name' => 'wallet-service',
-            'email' => 'wallet_service@gmail.com',
-            'password' => Hash::make('secret1234'),
-            'email_verified_at' => "2022-07-07 09:54:59"
-        ]);
+        $new_user = $this->createNewUser('User B', 'userb@gmail.com');
         //Virtual Wallet
-        $account_number = substr(str_shuffle("0123456789"), 0, 10);
-        $new_user->wallet()->create([
-            'balance' => 0,
-            'status' => 'ACTIVE',
-            'is_virtual' => true,
-        ]);
-
-
-        $this->user->wallet()->create([
-            'balance' => 1000,
-            'status' => 'ACTIVE',
-        ]);
+        $wallet = $this->createWallet($new_user);
+        $this->createWallet($this->user, 1200);
 
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $token,
         ])->json('POST', route('user.wallet.wallet-to-wallet'), [
             'amount' => 100,
-            'account_number' => $new_user->wallet->account_number
+            'account_number' => $wallet->account_number
         ]);
         $response->assertStatus(200);
 
