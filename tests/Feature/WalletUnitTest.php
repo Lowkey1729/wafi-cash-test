@@ -36,11 +36,7 @@ class WalletUnitTest extends TestCase
     public function it_can_find_user_wallet()
     {
         $token = $this->authenticate();
-        $this->user->wallet()->create([
-            'balance' => 0,
-            'status' => 'ACTIVE',
-
-        ]);
+        $this->createWallet($this->user);
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $token,
         ])->json('GET', route('user.wallet.details'));
@@ -54,11 +50,7 @@ class WalletUnitTest extends TestCase
     public function it_can_find_wallet_account_number()
     {
         $token = $this->authenticate();
-        $this->user->wallet()->create([
-            'balance' => 0,
-            'status' => 'ACTIVE',
-            'account_number' => substr(str_shuffle("0123456789"), 0, 10),
-        ]);
+        $this->createWallet($this->user);
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $token,
         ])->json('GET', route('user.wallet.details'));
