@@ -68,7 +68,7 @@ class AuthTest extends TestCase
      * @test
      *
      */
-    public function it_does_not_validate_fields_when_registering()
+    public function it_validates_fields_when_registering()
     {
         //User's data
         $data = [
