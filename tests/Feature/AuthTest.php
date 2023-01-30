@@ -55,11 +55,37 @@ class AuthTest extends TestCase
         ];
 
 
+
+
         //Send post request
         $response = $this->json('POST', route('auth.register'), $data);
 
         //Assert it passed through validation.
         $response->assertStatus(422);
+    }
+
+    /**
+     * @test
+     *
+     */
+    public function it_validates_fields_when_registering()
+    {
+        //User's data
+        $data = [
+            'email' => $this->faker->name,
+            'name' => $this->faker->email,
+            'password' => 'secret1234',
+            'password_confirmation' => 'secret1234',
+        ];
+
+
+
+
+        //Send post request
+        $response = $this->json('POST', route('auth.register'), $data);
+
+        //Assert it passed through validation.
+        $response->assertStatus(200);
     }
 
     /**
